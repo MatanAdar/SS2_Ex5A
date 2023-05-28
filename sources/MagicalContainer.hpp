@@ -20,6 +20,10 @@ namespace ariel{
                 return container;
             }
 
+            void setContainer(vector<int>& new_container){
+              container = new_container;
+            }
+
             void addElement(int element){
                 container.push_back(element);
             }
@@ -65,15 +69,37 @@ namespace ariel{
                 public:
 
                     //defult constructor
-                    AscendingIterator(MagicalContainer& container) : container(container){
+                    AscendingIterator(MagicalContainer& container) : container(container),index(0){
 
-                        std::sort(container.getContainer().begin(),container.getContainer().end());
+                        sortContainer();
                     }
 
                     //Copy constructor
                     AscendingIterator(const AscendingIterator& copy_container) : container(copy_container.container){}//Copy constructor
 
-                    
+
+                    // Sort the container
+                    void sortContainer() {
+                        std::sort(container.getContainer().begin(), container.getContainer().end());
+                    }
+
+                    // Return a new iterator at the beginning
+                    AscendingIterator begin() const{
+                        AscendingIterator begin_iterator(container);
+                        return begin_iterator;
+                    }
+
+                    // Return an iterator that point to the end of the container (one past the last element)
+                    AscendingIterator end() const{
+                        AscendingIterator iterator_end(container);
+                        iterator_end.index = container.size();
+                        return iterator_end;
+
+                        //return AscendingIterator(container).end();
+
+                    }
+
+
                     int& operator*() const {
                         return container.getContainer()[static_cast<vector<int>::size_type>(index)];
                     }
@@ -84,8 +110,10 @@ namespace ariel{
 
                     AscendingIterator& operator++(){
                         // Increment the index
-                        index++;
+                        this->index = this->index + 1;
+
                         return *this;
+
                     }
 
                     // MagicalContainer& operator=(const MagicalContainer& other){
@@ -115,20 +143,6 @@ namespace ariel{
                     }
 
 
-                    AscendingIterator begin() const{
-                        // Return a new iterator at the beginning
-                        return AscendingIterator(container);
-                    }
-
-                    AscendingIterator end() const{
-                        // Return an iterator that point to the end of the container (one past the last element)
-                        AscendingIterator iterator_end(container);
-                        iterator_end.index = container.size();
-                        return iterator_end;
-                    }
-
-
-
             };
 
 
@@ -140,11 +154,64 @@ namespace ariel{
                     int index;
 
                 public:
+
                     //defualt constructor
-                    SideCrossIterator(MagicalContainer& container) : container(container){} 
+                    SideCrossIterator(MagicalContainer& container) : container(container) , index(0){
+
+                        sortContainer();
+
+                        
+                    } 
 
                     //Copy constructor
                     SideCrossIterator(const SideCrossIterator& other_container) : container(other_container.container){} //Copy constructor
+
+                    void sortContainer() {
+                        size_t size = static_cast<size_t>(container.size());
+                        vector<int> temp(size, 0);
+
+                        vector<int>& temp2 = container.getContainer();
+
+                        size_t start = 0;
+                        size_t end = size - 1;
+                        size_t j = 0;
+                        int i = 1;
+                        while (i) {
+                            if (start == end) {
+                                temp[j] = temp2[start];
+                                // cout << temp2[start] << endl;
+                                i=0;
+                                continue;
+                            }
+
+                            if(j % 2 == 0) {
+                                temp[j] = temp2[start];
+                                // cout << temp2[start] << endl;
+                                start++;
+                            }else if(j%2 == 1){
+                                temp[j] = temp2[end];
+                                // cout << temp2[end] << endl;
+                                end--;
+                            }
+
+                            j++;
+                        }
+
+                        container.setContainer(temp);
+                    }
+
+                    // Return a new iterator at the beginning
+                    SideCrossIterator begin() const{
+                        return SideCrossIterator(container);
+                    }
+
+                    // Return an iterator that point to the end of the container (one past the last element)
+                    SideCrossIterator end() const{
+                        SideCrossIterator iterator_end(container);
+                        iterator_end.index = container.size();
+                        return iterator_end;
+                    }
+
 
                     int& operator*() const {
                         return container.getContainer()[static_cast<vector<int>::size_type>(index)];
@@ -159,17 +226,6 @@ namespace ariel{
                         return *this;
                     }
 
-                    // Return a new iterator at the beginning
-                    SideCrossIterator begin() const{
-                        return SideCrossIterator(container);
-                    }
-
-                    // Return an iterator that point to the end of the container (one past the last element)
-                    SideCrossIterator end() const{
-                        SideCrossIterator iterator_end(container);
-                        iterator_end.index = container.size();
-                        return iterator_end;
-                    }
 
                     bool operator==(const SideCrossIterator& other) const{
                         return index == other.index;
@@ -199,10 +255,24 @@ namespace ariel{
                 public:
 
                     //defualt constructor
-                    PrimeIterator(MagicalContainer& container) : container(container){} 
+                    PrimeIterator(MagicalContainer& container) : container(container) , index(0){} 
 
                     //Copy constructor
                     PrimeIterator(const PrimeIterator& other_container) : container(other_container.container){} //Copy constructor
+
+
+                    // Return a new iterator at the beginning
+                    PrimeIterator begin() const{
+                        return PrimeIterator(container);
+                    }
+
+                    // Return an iterator that point to the end of the container (one past the last element)
+                    PrimeIterator end() const{
+                        PrimeIterator iterator_end(container);
+                        iterator_end.index = container.size();
+                        return iterator_end;
+                    }
+
 
                     int& operator*() const {
                         return container.getContainer()[static_cast<vector<int>::size_type>(index)];
@@ -215,18 +285,6 @@ namespace ariel{
                         // Increment the index
                         index++;
                         return *this;
-                    }
-
-                    // Return a new iterator at the beginning
-                    PrimeIterator begin() const{
-                        return PrimeIterator(container);
-                    }
-
-                    // Return an iterator that point to the end of the container (one past the last element)
-                    PrimeIterator end() const{
-                        PrimeIterator iterator_end(container);
-                        iterator_end.index = container.size();
-                        return iterator_end;
                     }
 
                     bool operator==(const PrimeIterator& other) const{
