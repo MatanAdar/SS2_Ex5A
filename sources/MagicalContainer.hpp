@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <iostream>
 #include <algorithm>
+#include <cmath>
+
 
 using namespace std;
 
@@ -29,26 +31,46 @@ namespace ariel{
             }
 
             void removeElement(int element){
-                // for(auto i=container.begin(); i!=container.end();i++){
-                //     if(*i == element){
-                //         container.erase(i);
-                //     }
-                //     else{
-                //         i++;
-                //     }
-                // }
+                for(auto i=container.begin(); i!=container.end();i++){
+                    if(*i == element){
+                        container.erase(i);
+                        break;
+                    }
 
-                container.erase(std::find(container.begin(), container.end(), element));
-
+                }
             }
 
+            // return size of container
             int size(){
                 return container.size();
             }
 
-            ~MagicalContainer() = default; // destructor
+            // destructor
+            ~MagicalContainer() = default;
 
-            MagicalContainer(const MagicalContainer& other) = default; // copy constructor
+            // copy constructor
+            MagicalContainer(const MagicalContainer& other) = default;
+
+            // Copy assignment operator
+            MagicalContainer& operator=(const MagicalContainer& other) {
+                if (this != &other) {
+                    // Perform deep copy of the container
+                    container = other.container;
+                }
+                return *this;
+            }
+
+            // Move constructor
+            MagicalContainer(MagicalContainer&& other) noexcept = default;
+
+            // Move assignment operator
+            MagicalContainer& operator=(MagicalContainer&& other) noexcept {
+                if (this != &other) {
+                    // Move the container from the other object
+                    container = std::move(other.container);
+                }
+                return *this;
+            }
 
 
             
@@ -95,7 +117,6 @@ namespace ariel{
                         iterator_end.index = container.size();
                         return iterator_end;
 
-                        //return AscendingIterator(container).end();
 
                     }
 
@@ -134,12 +155,20 @@ namespace ariel{
                     //     return *this;
                     // }
 
-                    bool operator==(const AscendingIterator& other_iterator) const {
-                        return index == other_iterator.index;
+                    bool operator==(const AscendingIterator& other) const{
+                        return index == other.index;
                     }
 
-                    bool operator!=(const AscendingIterator& other_iterator) const {
-                        return index != other_iterator.index;
+                    bool operator!=(const AscendingIterator& other) const{
+                        return index != other.index;
+                    }
+
+                    bool operator>(const AscendingIterator& other) const{
+                        return index > other.index;
+                    }
+
+                    bool operator<(const AscendingIterator& other) const{
+                        return index < other.index;
                     }
 
 
@@ -151,16 +180,30 @@ namespace ariel{
                 private:
 
                     MagicalContainer& container;
-                    int index;
+                    int index = 0;
 
                 public:
 
                     //defualt constructor
-                    SideCrossIterator(MagicalContainer& container) : container(container) , index(0){
-
+                    SideCrossIterator(MagicalContainer& container) : container(container){
+                        
                         sortContainer();
 
-                        
+
+                        // std::vector<int> sortedElements = container.getContainer();
+                        // std::sort(sortedElements.begin(), sortedElements.end());
+                        // size_t start = 0;
+                        // size_t end = sortedElements.size() -1;
+                        // std::vector<int> crossElements(sortedElements.size());
+                        // for (size_t i = 0; i < crossElements.size() ; i+=2) {
+                        //     crossElements[i] = sortedElements[start];
+                        //     crossElements[i+1] = sortedElements[end];
+                        //     start++;
+                        //     end--;
+
+                        // }
+                        // this->container.setContainer(crossElements);
+
                     } 
 
                     //Copy constructor
@@ -171,32 +214,31 @@ namespace ariel{
                         vector<int> temp(size, 0);
 
                         vector<int>& temp2 = container.getContainer();
+                        std::sort(temp2.begin(), temp2.end());
 
                         size_t start = 0;
                         size_t end = size - 1;
                         size_t j = 0;
-                        int i = 1;
-                        while (i) {
+                        
+                        while (start <= end) {
                             if (start == end) {
                                 temp[j] = temp2[start];
-                                // cout << temp2[start] << endl;
-                                i=0;
-                                continue;
+                                break;
                             }
 
-                            if(j % 2 == 0) {
-                                temp[j] = temp2[start];
-                                // cout << temp2[start] << endl;
-                                start++;
-                            }else if(j%2 == 1){
-                                temp[j] = temp2[end];
-                                // cout << temp2[end] << endl;
-                                end--;
-                            }
+                            //from first the container
+                            temp[j] = temp2[start];
+                            start++;
 
-                            j++;
+                            //from end the container
+                            temp[j+1] = temp2[end];
+                            end--;
+
+                            //increase j by 2
+                            j+=2;
                         }
 
+                        //replace the new container in the old one
                         container.setContainer(temp);
                     }
 
@@ -252,13 +294,49 @@ namespace ariel{
                     MagicalContainer& container;
                     int index;
 
+                    bool isPrime(int element){
+                        
+                        if(element <= 1){
+                            return false;
+                        }
+
+                        if(element == 2 || element == 3){
+                            return true;
+                        }
+
+                        for(int i=2 ; i<=sqrt(element) ; i++){
+                            if(element % i == 0){
+                                return false;
+                            }
+                        }
+
+                        return true;
+                    }
+
                 public:
 
                     //defualt constructor
-                    PrimeIterator(MagicalContainer& container) : container(container) , index(0){} 
+                    PrimeIterator(MagicalContainer& container) : container(container) , index(0){
+                        sortPrimeContainer();
+                    } 
 
                     //Copy constructor
                     PrimeIterator(const PrimeIterator& other_container) : container(other_container.container){} //Copy constructor
+
+                    void sortPrimeContainer(){
+                        
+                        // std::sort(container.getContainer().begin(), container.getContainer().end());
+                        vector<int> temp = {};
+
+                        for(size_t i = 0 ; i<container.size();i++){
+                            bool check = isPrime(container.getContainer()[i]);
+                            if(check){
+                                temp.push_back(container.getContainer()[i]);
+                            }
+                        }
+
+                        container.setContainer(temp);
+                    }
 
 
                     // Return a new iterator at the beginning
