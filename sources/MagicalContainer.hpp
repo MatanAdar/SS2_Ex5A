@@ -16,7 +16,11 @@ namespace ariel{
 
         public:
 
-            MagicalContainer() = default; //defult constructor
+            //defult constructor
+            MagicalContainer() = default;
+
+            // copy constructor
+            MagicalContainer(const MagicalContainer& other) = default;
 
             vector<int>& getContainer(){
                 return container;
@@ -47,9 +51,6 @@ namespace ariel{
 
             // destructor
             ~MagicalContainer() = default;
-
-            // copy constructor
-            MagicalContainer(const MagicalContainer& other) = default;
 
             // Copy assignment operator
             MagicalContainer& operator=(const MagicalContainer& other) {
@@ -97,7 +98,7 @@ namespace ariel{
                     }
 
                     //Copy constructor
-                    AscendingIterator(const AscendingIterator& copy_container) : container(copy_container.container){}//Copy constructor
+                    AscendingIterator(const AscendingIterator& copy_container) : container(copy_container.container) , index(copy_container.index){}
 
 
                     // Sort the container
@@ -125,10 +126,6 @@ namespace ariel{
                         return container.getContainer()[static_cast<vector<int>::size_type>(index)];
                     }
 
-                    //Destructor
-                    ~AscendingIterator() = default;
-
-
                     AscendingIterator& operator++(){
                         // Increment the index
                         this->index = this->index + 1;
@@ -136,24 +133,6 @@ namespace ariel{
                         return *this;
 
                     }
-
-                    // MagicalContainer& operator=(const MagicalContainer& other){
-                    //     if (this != &other)
-                    //     {
-                    //         // Perform any necessary deep copying or assignment
-                    //         // of data members and iterators
-
-                    //         // Example:
-                    //         // Copy the data members
-                    //         // this->data = other.data;
-
-                    //         // Copy the iterators
-                    //         // this->iterator = other.iterator;
-                    //     }
-
-                    //     // Return the reference to the current object
-                    //     return *this;
-                    // }
 
                     bool operator==(const AscendingIterator& other) const{
                         return index == other.index;
@@ -172,6 +151,31 @@ namespace ariel{
                     }
 
 
+                    //Destructor
+                    ~AscendingIterator() = default;
+
+
+                    // Copy assignment operator
+                    AscendingIterator& operator=(const AscendingIterator& other) {
+                        if (this != &other) {
+                            container = other.container;
+                            index = other.index;
+                        }
+                        return *this;
+                    }
+
+                    // Move constructor
+                    AscendingIterator(AscendingIterator&& other) noexcept : container(other.container), index(other.index) {}
+
+                    // Move assignment operator
+                    AscendingIterator& operator=(AscendingIterator&& other) noexcept {
+                        if (this != &other) {
+                            container = std::move(other.container);
+                            index = other.index;
+                        }
+                        return *this;
+                    }
+
             };
 
 
@@ -187,29 +191,15 @@ namespace ariel{
                     //defualt constructor
                     SideCrossIterator(MagicalContainer& container) : container(container){
                         
-                        sortContainer();
-
-
-                        // std::vector<int> sortedElements = container.getContainer();
-                        // std::sort(sortedElements.begin(), sortedElements.end());
-                        // size_t start = 0;
-                        // size_t end = sortedElements.size() -1;
-                        // std::vector<int> crossElements(sortedElements.size());
-                        // for (size_t i = 0; i < crossElements.size() ; i+=2) {
-                        //     crossElements[i] = sortedElements[start];
-                        //     crossElements[i+1] = sortedElements[end];
-                        //     start++;
-                        //     end--;
-
-                        // }
-                        // this->container.setContainer(crossElements);
+                        sortSizeCrossContainer();
 
                     } 
 
                     //Copy constructor
                     SideCrossIterator(const SideCrossIterator& other_container) : container(other_container.container){} //Copy constructor
 
-                    void sortContainer() {
+
+                    void sortSizeCrossContainer() {
                         size_t size = static_cast<size_t>(container.size());
                         vector<int> temp(size, 0);
 
@@ -218,29 +208,30 @@ namespace ariel{
 
                         size_t start = 0;
                         size_t end = size - 1;
-                        size_t j = 0;
+                        size_t idx = 0;
                         
                         while (start <= end) {
                             if (start == end) {
-                                temp[j] = temp2[start];
+                                temp[idx] = temp2[start];
                                 break;
                             }
 
                             //from first the container
-                            temp[j] = temp2[start];
+                            temp[idx] = temp2[start];
                             start++;
 
                             //from end the container
-                            temp[j+1] = temp2[end];
+                            temp[idx+1] = temp2[end];
                             end--;
 
                             //increase j by 2
-                            j+=2;
+                            idx+=2;
                         }
 
-                        //replace the new container in the old one
+                        //replace the old container with the new one
                         container.setContainer(temp);
                     }
+
 
                     // Return a new iterator at the beginning
                     SideCrossIterator begin() const{
@@ -259,15 +250,11 @@ namespace ariel{
                         return container.getContainer()[static_cast<vector<int>::size_type>(index)];
                     }
 
-                    //Destructor
-                    ~SideCrossIterator() = default;
-
                     SideCrossIterator& operator++(){
                         // Increment the index
                         index++;
                         return *this;
                     }
-
 
                     bool operator==(const SideCrossIterator& other) const{
                         return index == other.index;
@@ -284,6 +271,31 @@ namespace ariel{
                     bool operator<(const SideCrossIterator& other) const{
                         return index < other.index;
                     }
+
+
+                    //Destructor
+                    ~SideCrossIterator() = default;
+
+                    // Copy assignment operator
+                    SideCrossIterator& operator=(const SideCrossIterator& other) {
+                        if (this != &other) {
+                            container = other.container;
+                            index = other.index;
+                        }
+                        return *this;
+                    }
+
+                    // Move constructor
+                    SideCrossIterator(SideCrossIterator&& other) noexcept : container(other.container), index(other.index) {}
+
+                    // Move assignment operator
+                    SideCrossIterator& operator=(SideCrossIterator&& other) noexcept {
+                        if (this != &other) {
+                            container = std::move(other.container);
+                            index = other.index;
+                        }
+                        return *this;
+                    }
             };
 
 
@@ -294,7 +306,7 @@ namespace ariel{
                     MagicalContainer& container;
                     int index;
 
-                    bool isPrime(int element){
+                    bool static isPrime(int element){
                         
                         if(element <= 1){
                             return false;
@@ -321,7 +333,7 @@ namespace ariel{
                     } 
 
                     //Copy constructor
-                    PrimeIterator(const PrimeIterator& other_container) : container(other_container.container){} //Copy constructor
+                    PrimeIterator(const PrimeIterator& other_container) : container(other_container.container) , index(other_container.index){} //Copy constructor
 
                     void sortPrimeContainer(){
                         
@@ -356,8 +368,6 @@ namespace ariel{
                         return container.getContainer()[static_cast<vector<int>::size_type>(index)];
                     }
 
-                    //Destructor
-                    ~PrimeIterator() = default;
 
                     PrimeIterator& operator++(){
                         // Increment the index
@@ -379,6 +389,31 @@ namespace ariel{
 
                     bool operator<(const PrimeIterator& other) const{
                         return index < other.index;
+                    }
+
+                    //Destructor
+                    ~PrimeIterator() = default;
+
+
+                    // Copy assignment operator
+                    PrimeIterator& operator=(const PrimeIterator& other) {
+                        if (this != &other) {
+                            container = other.container;
+                            index = other.index;
+                        }
+                        return *this;
+                    }
+
+                    // Move constructor
+                    PrimeIterator(PrimeIterator&& other) noexcept : container(other.container), index(other.index) {}
+
+                    // Move assignment operator
+                    PrimeIterator& operator=(PrimeIterator&& other) noexcept {
+                        if (this != &other) {
+                            container = std::move(other.container);
+                            index = other.index;
+                        }
+                        return *this;
                     }
 
             };
