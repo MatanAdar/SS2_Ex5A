@@ -45,7 +45,7 @@ namespace ariel{
             }
 
             // return size of container
-            int size(){
+            size_t size(){
                 return container.size();
             }
 
@@ -115,7 +115,7 @@ namespace ariel{
                     // Return an iterator that point to the end of the container (one past the last element)
                     AscendingIterator end() const{
                         AscendingIterator iterator_end(container);
-                        iterator_end.index = container.size();
+                        iterator_end.index = (int)container.size();
                         return iterator_end;
 
 
@@ -241,7 +241,7 @@ namespace ariel{
                     // Return an iterator that point to the end of the container (one past the last element)
                     SideCrossIterator end() const{
                         SideCrossIterator iterator_end(container);
-                        iterator_end.index = container.size();
+                        iterator_end.index = (int)container.size();
                         return iterator_end;
                     }
 
@@ -359,7 +359,7 @@ namespace ariel{
                     // Return an iterator that point to the end of the container (one past the last element)
                     PrimeIterator end() const{
                         PrimeIterator iterator_end(container);
-                        iterator_end.index = container.size();
+                        iterator_end.index = (int)container.size();
                         return iterator_end;
                     }
 
