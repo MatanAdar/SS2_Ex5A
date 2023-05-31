@@ -31,6 +31,12 @@ namespace ariel{
             }
 
             void addElement(int element){
+                for(size_t i = 0; i<container.size();i++){
+                    if(container[i] == element){
+                        return;
+                    }
+                }
+
                 container.push_back(element);
             }
 
@@ -40,7 +46,6 @@ namespace ariel{
                         container.erase(i);
                         break;
                     }
-
                 }
             }
 
@@ -82,6 +87,38 @@ namespace ariel{
 
         public:
 
+            // class Iterator{
+
+            //     private:
+
+            //         MagicalContainer& container;
+            //         int index = 0;
+                    
+
+            //     public:
+
+            //         Iterator(MagicalContainer& container) : container(container){}
+
+
+            //         // // Return a new iterator at the beginning
+            //         // AscendingIterator begin() const{
+            //         //     AscendingIterator begin_iterator(container);
+            //         //     return begin_iterator;
+            //         // }
+
+            //         // // Return an iterator that point to the end of the container (one past the last element)
+            //         // AscendingIterator end() const{
+            //         //     AscendingIterator iterator_end(container);
+            //         //     iterator_end.index = (int)container.size();
+            //         //     return iterator_end;
+
+            //         // }
+
+                    
+
+
+            // };
+
             class AscendingIterator{
 
                 private:
@@ -118,7 +155,6 @@ namespace ariel{
                         iterator_end.index = (int)container.size();
                         return iterator_end;
 
-
                     }
 
 
@@ -152,7 +188,7 @@ namespace ariel{
 
 
                     //Destructor
-                    ~AscendingIterator() = default;
+                    virtual ~AscendingIterator() = default;
 
 
                     // Copy assignment operator
@@ -339,6 +375,8 @@ namespace ariel{
                         
                         // std::sort(container.getContainer().begin(), container.getContainer().end());
                         vector<int> temp = {};
+
+                        std::sort(container.getContainer().begin(),container.getContainer().end());
 
                         for(size_t i = 0 ; i<container.size();i++){
                             bool check = isPrime(container.getContainer()[i]);
